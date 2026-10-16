@@ -1,0 +1,10 @@
+# Machine Learning Triangulation Stack
+xgboost>=2.1.0
+scikit-learn>=1.5.0
+pandas>=2.2.0
+numpy>=1.26.0
+
+# AI Agent Framework Stack
+langgraph>=0.2.0
+langchain-groq>=0.1.0
+pydantic>=2.7.0
