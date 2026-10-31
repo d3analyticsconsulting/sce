@@ -12,9 +12,15 @@ from langgraph.graph import StateGraph, START, END
 
 os.environ["GROQ_API_KEY"] = dbutils.secrets.get(scope="tokens", key="groq_api_key")
 
+try:
+    SCE_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+except NameError:
+    # Running as an interactive cell / notebook where __file__ is undefined
+    SCE_ROOT = "/Workspace/Users/d3analyticsconsulting@gmail.com/SCE"
 sys.path.append(os.path.abspath('.'))
-sys.path.append('/Workspace/Git/sce/simulation/data')
-sys.path.append('/Workspace/Git/sce/simulation/model')
+sys.path.append(os.path.join(SCE_ROOT, 'data'))
+sys.path.append(os.path.join(SCE_ROOT, 'model'))
+SKILL_FILE_PATH = os.path.join(SCE_ROOT, 'ai_groq', 'skills.md')
 
 import data_transform
 import classification_model
@@ -84,7 +90,7 @@ def node_targeted_groq_audit(state: TriangulatedState) -> dict:
         # --- FIXED 2: Preserved all incoming pipeline objects so they propagate to Node 3 ---
         return {**state, "full_test_df": full_test_df}
         
-    skill_file_path = "/Workspace/Git/sce/simulation/ai_groq/databricks_groq_skill.md"
+    skill_file_path = SKILL_FILE_PATH
     with open(skill_file_path, "r", encoding="utf-8") as f:
         ai_skill_markdown = f.read()
         
@@ -102,7 +108,7 @@ def node_targeted_groq_audit(state: TriangulatedState) -> dict:
                 chunk_predictions = (chunk_predictions + [0] * len(chunk))[:len(chunk)]
             ai_predictions.extend(chunk_predictions)
         except Exception as e:
-            ai_predictions.extend( * len(chunk))
+            ai_predictions.extend([0] * len(chunk))
             
     if len(ai_predictions) != len(audit_df):
         ai_predictions = (ai_predictions + [0] * len(audit_df))[:len(audit_df)]
@@ -148,7 +154,7 @@ def node_targeted_groq_fcst_audit(state: TriangulatedState) -> dict:
     print(f"Token Optimization: Found {len(forecast_audit_rows)} uncertain future rows out of {len(forecast_df)} for Groq processing.")
     
     if not forecast_audit_rows.empty:
-        skill_file_path = "/Workspace/Git/sce/simulation/ai_groq/databricks_groq_skill.md"
+        skill_file_path = SKILL_FILE_PATH
         with open(skill_file_path, "r", encoding="utf-8") as f:
             ai_skill_markdown = f.read()
             

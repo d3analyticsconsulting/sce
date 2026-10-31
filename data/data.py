@@ -93,7 +93,7 @@ def _write_to_uc(df):
     TARGET_SCHEMA = "default"
     TABLE_NAME = f"{TARGET_CATALOG}.{TARGET_SCHEMA}.fact_electricity_synthetic_by_zip"
 
-    spark.sql(f"DROP TABLE IF EXISTS {TABLE_NAME}")
+    #spark.sql(f"DROP TABLE IF EXISTS {TABLE_NAME}")
 
     spark_df.write \
         .format("delta") \
@@ -101,6 +101,9 @@ def _write_to_uc(df):
         .saveAsTable(TABLE_NAME)
 
 def main():
+
+    spark.sql("CREATE CATALOG IF NOT EXISTS sce_db")
+    spark.sql("CREATE SCHEMA IF NOT EXISTS sce_db.default")
 
     table_path = "sce_db.default.fact_electricity_synthetic_by_zip"
     
